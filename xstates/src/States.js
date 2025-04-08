@@ -13,7 +13,9 @@ export default function States() {
   const [countryInput, setCountryInput] = useState("");
   const [states, setStates] = useState([]);
   const [stateInput, setStateInput] = useState("");
-  const [disable, setDisable] = useState(false);
+  const [cities, setCities] = useState([]);
+  const [cityInput, setCityInput] = useState("");
+  const [disable, setDisable] = useState(true); // previously by-default we are making unable on click
   console.log("Countries are fetched :", countries);
   console.log("States are fetched :", states);
   console.log(typeof states)
@@ -32,14 +34,16 @@ export default function States() {
   }, []) // first them when the component appears on browser , that time only it will render which means no multiple renders on browser load.
 
   useEffect(() => {
+    console.log("checking input", countryInput)
     async function getStates() {
       if (countryInput) {
-        setDisable(true);
+        setDisable(false);
         try {
           const response = await fetch(`https://crio-location-selector.onrender.com/country=${countryInput}/states`);
           const data = await response.json();
           console.log("Fetched states:", data);
-          setStates(Array.isArray(data.states) ? data.states : []); 
+          // setStates(Array.isArray(data.states) ? data.states : []); 
+          setStates(data);
         } catch (error) {
           console.log(error);
         }
@@ -48,9 +52,29 @@ export default function States() {
     getStates();
   }, [countryInput]);
 
+
+  useEffect(() => {
+    console.log("checking input", countryInput, stateInput)
+    async function getCities() {
+      if (countryInput && stateInput) {
+        setDisable(false);
+        try {
+          const response = await fetch(`https://crio-location-selector.onrender.com/country=${countryInput}/state=${stateInput}/cities`);
+          const data = await response.json();
+          console.log("Fetched states:", data);
+          // setStates(Array.isArray(data.states) ? data.states : []); 
+          setCities(data);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+    getCities();
+  }, [countryInput, stateInput]);
+
   return (
     <>
-      <div>States</div>
+      {/* <div>States</div> */}
       <div style={{ display: "flex", flexDirection: "row", gap: "3rem", justifyContent: "center" }}>
         <Box sx={{ minWidth: 120 }} >
           <FormControl fullWidth className='countriesDropDown'>
@@ -72,7 +96,7 @@ export default function States() {
         </Box>
 
         <Box sx={{ minWidth: 120 }} >
-          <FormControl fullWidth className='statesDropDown' disabled={disable}>
+          <FormControl fullWidth className='statesDropDown' disabled={disable} >
             <InputLabel id="demo-simple-select-label">Select State</InputLabel>
             <Select
               labelId="demo-simple-select-label"
@@ -89,8 +113,27 @@ export default function States() {
             </Select>
           </FormControl>
         </Box>
+
+        <Box sx={{ minWidth: 120 }} >
+          <FormControl fullWidth className='citiesDropDown' disabled={disable} >
+            <InputLabel id="demo-simple-select-label">Select City</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={cityInput}
+              label="Select State"
+              onChange={(e) => setCityInput(e.target.value)}
+            >{
+                cities.map((city, i) =>
+                  <MenuItem key={i} value={city}>{city}</MenuItem>
+                )}
+
+
+            </Select>
+          </FormControl>
+        </Box>
       </div>
-      <p>You selected: {countryInput}</p>
+      <p>You selected {countryInput} {stateInput} {cityInput}</p>
 
     </>
   )
