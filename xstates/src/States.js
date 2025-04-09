@@ -125,7 +125,7 @@ export default function States() {
         </Select>
       </div>
       {
-        cityInput && (<p>You selected {countryInput} {stateInput} {cityInput}</p>)
+        cityInput && (<p>You selected {countryInput}, {stateInput}, {cityInput}</p>)
       }
       
 
