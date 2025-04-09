@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 // import * as React from 'react';
 // import axios from axios;
 import './App.css';
-import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
+// import Box from '@mui/material/Box';
+// import InputLabel from '@mui/material/InputLabel';
+// import MenuItem from '@mui/material/MenuItem';
+// import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 export default function States() {
 
@@ -15,7 +15,8 @@ export default function States() {
   const [stateInput, setStateInput] = useState("");
   const [cities, setCities] = useState([]);
   const [cityInput, setCityInput] = useState("");
-  const [disable, setDisable] = useState(true); // previously by-default we are making unable on click
+  // const [disable, setDisable] = useState(true); // previously by-default we are making unable on click
+  // const [disableCity, setDisableCity] = useState(true);
   console.log("Countries are fetched :", countries);
   console.log("States are fetched :", states);
   console.log(typeof states)
@@ -37,7 +38,7 @@ export default function States() {
     console.log("checking input", countryInput)
     async function getStates() {
       if (countryInput) {
-        setDisable(false);
+        // setDisable(false);
         try {
           const response = await fetch(`https://crio-location-selector.onrender.com/country=${countryInput}/states`);
           const data = await response.json();
@@ -57,7 +58,7 @@ export default function States() {
     console.log("checking input", countryInput, stateInput)
     async function getCities() {
       if (countryInput && stateInput) {
-        setDisable(false);
+        // setDisableCity(false);
         try {
           const response = await fetch(`https://crio-location-selector.onrender.com/country=${countryInput}/state=${stateInput}/cities`);
           const data = await response.json();
@@ -76,69 +77,61 @@ export default function States() {
     <>
       {/* <div>States</div> */}
       <div style={{ display: "flex", flexDirection: "row", gap: "3rem", justifyContent: "center" }}>
-        <Box sx={{ minWidth: 120 }} >
-          <FormControl fullWidth className='countriesDropDown'>
-            <InputLabel id="demo-simple-select-label">Select Country</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={countryInput}
-              label="Select Country"
-              onChange={(e) => setCountryInput(e.target.value)}
-            >{
-                countries.map((country, i) =>
-                  <MenuItem key={i} value={country}>{country}</MenuItem>
-                )}
+        <Select
+          native
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={countryInput}
+          label="Select Country"
+          onChange={(e) => setCountryInput(e.target.value)}
+        >
+          <option value="">Select Country</option>
+          {countries.map((country, i) => (
+            <option key={i} value={country}>{country}</option>
+          ))}
+        </Select>
 
 
-            </Select>
-          </FormControl>
-        </Box>
 
-        <Box sx={{ minWidth: 120 }} >
-          <FormControl fullWidth className='statesDropDown' disabled={disable} >
-            <InputLabel id="demo-simple-select-label">Select State</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={stateInput}
-              label="Select State"
-              onChange={(e) => setStateInput(e.target.value)}
-            >{
-                states.map((state, i) =>
-                  <MenuItem key={i} value={state}>{state}</MenuItem>
-                )}
+        <Select
+          native
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={stateInput}
+          label="Select State"
+          onChange={(e) => setStateInput(e.target.value)}
+          disabled={!countryInput}
+        >
+          <option value="">Select State</option>
+          {states.map((state, i) => (
+            <option key={i} value={state}>{state}</option>
+          ))}
+        </Select>
 
 
-            </Select>
-          </FormControl>
-        </Box>
-
-        <Box sx={{ minWidth: 120 }} >
-          <FormControl fullWidth className='citiesDropDown' disabled={disable} >
-            <InputLabel id="demo-simple-select-label">Select City</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={cityInput}
-              label="Select State"
-              onChange={(e) => setCityInput(e.target.value)}
-            >{
-                cities.map((city, i) =>
-                  <MenuItem key={i} value={city}>{city}</MenuItem>
-                )}
-
-
-            </Select>
-          </FormControl>
-        </Box>
+        <Select
+          native
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={cityInput}
+          label="Select City"
+          onChange={(e) => setCityInput(e.target.value)}
+          disabled={!stateInput}
+        >
+          <option value="">Select City</option>
+          {cities.map((city, i) => (
+            <option key={i} value={city}>{city}</option>
+          ))}
+        </Select>
       </div>
       {
-        (countryInput && cityInput && stateInput) ? (<p>You selected {countryInput} {stateInput} {cityInput}</p>) : null
+        cityInput && (<p>You selected {countryInput} {stateInput} {cityInput}</p>)
       }
       
+
 
     </>
   )
 }
 
+//important :::: In MUI (@mui/material), the native prop on a <Select> component tells it to render a native HTML <select> element rather than using MUI's custom-styled dropdown (which uses <MenuItem> under the hood).
