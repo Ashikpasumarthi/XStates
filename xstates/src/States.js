@@ -133,7 +133,10 @@ export default function States() {
           </FormControl>
         </Box>
       </div>
-      <p>You selected {countryInput} {stateInput} {cityInput}</p>
+      {
+        (countryInput && cityInput && stateInput) ? (<p>You selected {countryInput} {stateInput} {cityInput}</p>) : null
+      }
+      
 
     </>
   )
